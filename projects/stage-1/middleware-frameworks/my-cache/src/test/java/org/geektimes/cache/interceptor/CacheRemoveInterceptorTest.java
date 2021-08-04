@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.geektimes.cache.annotation.interceptor;
+package org.geektimes.cache.interceptor;
 
 import org.geektimes.cache.DataRepository;
 import org.geektimes.cache.InMemoryDataRepository;
+import org.geektimes.cache.annotation.interceptor.CachePutInterceptor;
 import org.geektimes.interceptor.DefaultInterceptorEnhancer;
 import org.geektimes.interceptor.InterceptorEnhancer;
 import org.junit.Test;
@@ -25,10 +26,10 @@ import org.junit.Test;
 import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
+import javax.cache.annotation.CachePut;
 import javax.cache.spi.CachingProvider;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * {@link CachePutInterceptor} Test
@@ -36,7 +37,7 @@ import static org.junit.Assert.assertTrue;
  * @author <a href="mailto:mercyblitz@gmail.com">Mercy</a>
  * @since 1.0.0
  */
-public class CachePutInterceptorTest {
+public class CacheRemoveInterceptorTest {
 
     private DataRepository dataRepository = new InMemoryDataRepository();
 
@@ -48,9 +49,13 @@ public class CachePutInterceptorTest {
 
     @Test
     public void test() {
-        DataRepository repository = enhancer.enhance(dataRepository, DataRepository.class, new CachePutInterceptor());
+        DataRepository repository = enhancer.enhance(dataRepository, DataRepository.class, new CachePutInterceptor(),new CacheRemoveInterceptor());
         assertTrue(repository.create("A", 1));
-        System.out.println(repository.get("A"));
+        System.out.println("删除前:cache 里面的数据:"+repository.get("A"));
+        repository.create("B", "2");
+        assertTrue(repository.remove("A"));
+        assertFalse(repository.remove("A"));
+        System.out.println("删除后:cache 里面的数据:"+repository.get("A"));
 
     }
 }

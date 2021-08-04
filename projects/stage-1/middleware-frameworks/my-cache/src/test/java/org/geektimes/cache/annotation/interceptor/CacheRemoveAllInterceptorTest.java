@@ -46,8 +46,8 @@ public class CacheRemoveAllInterceptorTest {
 
         assertTrue(repository.create("A", 1));
         assertTrue(repository.create("B", 2));
-        assertEquals(Integer.valueOf(1), repository.get("A"));
-        assertEquals(Integer.valueOf(2), repository.get("B"));
+        assertEquals(1, repository.get("A"));
+        assertEquals(2, repository.get("B"));
 
         repository.removeAll();
         assertNull(repository.get("A"));
