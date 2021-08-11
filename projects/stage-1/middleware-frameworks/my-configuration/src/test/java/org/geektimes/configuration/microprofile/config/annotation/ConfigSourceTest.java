@@ -28,25 +28,30 @@ import java.net.URL;
  * @since 1.0.0
  */
 @ConfigSource(ordinal = 200, resource = "classpath:/META-INF/default.properties")
+@ConfigSource(ordinal = 200, resource = "classpath:/META-INF/default.properties")
+@ConfigSource(ordinal = 300, resource = "classpath:/META-INF/default2.properties")
 public class ConfigSourceTest {
 
     @Before
     public void initConfigSourceFactory() throws Throwable {
-        ConfigSource configSource = getClass().getAnnotation(ConfigSource.class);
-        String name = configSource.name();
-        int ordinal = configSource.ordinal();
-        String encoding = configSource.encoding();
-        String resource = configSource.resource();
-        URL resourceURL = new URL(resource);
-        Class<? extends ConfigSourceFactory> configSourceFactoryClass = configSource.factory();
-        if (ConfigSourceFactory.class.equals(configSourceFactoryClass)) {
-            configSourceFactoryClass = DefaultConfigSourceFactory.class;
+        ConfigSource[] items = getClass().getDeclaredAnnotationsByType(ConfigSource.class);
+        for (ConfigSource configSource : items) {
+            String name = configSource.name();
+            int ordinal = configSource.ordinal();
+            String encoding = configSource.encoding();
+            String resource = configSource.resource();
+            URL resourceURL = new URL(resource);
+            Class<? extends ConfigSourceFactory> configSourceFactoryClass = configSource.factory();
+            if (ConfigSourceFactory.class.equals(configSourceFactoryClass)) {
+                configSourceFactoryClass = DefaultConfigSourceFactory.class;
+            }
+
+            ConfigSourceFactory configSourceFactory = configSourceFactoryClass.newInstance();
+            org.eclipse.microprofile.config.spi.ConfigSource source =
+                    configSourceFactory.createConfigSource(name, ordinal, resourceURL, encoding);
+            System.out.println(source.getProperties());
         }
 
-        ConfigSourceFactory configSourceFactory = configSourceFactoryClass.newInstance();
-        org.eclipse.microprofile.config.spi.ConfigSource source =
-                configSourceFactory.createConfigSource(name, ordinal, resourceURL, encoding);
-        System.out.println(source.getProperties());
     }
 
     @Test
