@@ -1,4 +1,16 @@
-@Repeatable 注解的作用
+#### Handler 实现自定义协议的解析:
+
+具体作业见
+
+`org.geektimes.configuration.microprofile.config.annotation.DefaultConfigSourceFactory`
+
+`sun.net.www.protocol.ttl.Handler`,使用 `getContent` 方法来获取内容
+
+这两个类,实现了 ttl 协议的解析(取名无力).
+
+===============================================================
+
+#### @Repeatable 注解的作用
 
 ```java
 @Documented
@@ -76,5 +88,4 @@ for (ConfigSource item : sources) {
 @ConfigSource(ordinal = 300, resource = "classpath:/META-INF/default2.properties")
 public class ConfigSourceTest {
 ```
-
 
