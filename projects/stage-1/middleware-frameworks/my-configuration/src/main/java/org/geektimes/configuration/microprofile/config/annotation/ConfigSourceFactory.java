@@ -18,6 +18,7 @@ package org.geektimes.configuration.microprofile.config.annotation;
 
 import org.eclipse.microprofile.config.spi.ConfigSource;
 
+import java.io.IOException;
 import java.net.URL;
 
 /**
@@ -37,5 +38,5 @@ public interface ConfigSourceFactory {
      * @param encoding the encoding of the content of resource
      * @return {@link org.eclipse.microprofile.config.spi.ConfigSource}
      */
-    org.eclipse.microprofile.config.spi.ConfigSource createConfigSource(String name, int ordinal, URL resource, String encoding);
+    org.eclipse.microprofile.config.spi.ConfigSource createConfigSource(String name, int ordinal, URL resource, String encoding) throws IOException;
 }

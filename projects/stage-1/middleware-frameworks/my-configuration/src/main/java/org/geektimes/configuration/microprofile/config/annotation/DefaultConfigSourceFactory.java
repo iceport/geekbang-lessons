@@ -17,6 +17,7 @@
 package org.geektimes.configuration.microprofile.config.annotation;
 
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.microprofile.config.spi.ConfigBuilder;
 import org.eclipse.microprofile.config.spi.ConfigSource;
 import org.geektimes.configuration.microprofile.config.source.MapConfigSource;
 
@@ -35,17 +36,34 @@ import java.util.Properties;
 public class DefaultConfigSourceFactory implements ConfigSourceFactory {
 
     @Override
-    public ConfigSource createConfigSource(String name, int ordinal, URL resource, String encoding) {
+    public ConfigSource createConfigSource(String name, int ordinal, URL resource, String encoding) throws IOException {
         ConfigSource configSource = null;
-        try (InputStream inputStream = resource.openStream();
-             InputStreamReader reader = new InputStreamReader(inputStream, encoding)) {
-            Properties properties = new Properties();
-            properties.load(reader);
-            String actualName = StringUtils.isBlank(name) ? resource.toString() : name;
-            configSource = new MapConfigSource(actualName, ordinal, properties);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        String protocol = resource.getProtocol();
+        if ("classpath".equals(protocol)) {
+            try (InputStream inputStream = resource.openStream();
+                 InputStreamReader reader = new InputStreamReader(inputStream, encoding)) {
+                Properties properties = new Properties();
+                properties.load(reader);
+                String actualName = StringUtils.isBlank(name) ? resource.toString() : name;
+                configSource = new MapConfigSource(actualName, ordinal, properties);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } else if ("ttl".equals(protocol)) {
+            String resourcePath = (String) resource.getContent();
+            InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath);
+            try (InputStreamReader reader = new InputStreamReader(stream, encoding)) {
+                Properties properties = new Properties();
+                properties.load(reader);
+
+                String actualName = StringUtils.isBlank(name) ? resource.toString() : name;
+                configSource = new MapConfigSource(actualName, ordinal, properties);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
+
         return configSource;
     }
+
 }

@@ -7,7 +7,7 @@ import org.junit.Test;
 import java.net.URL;
 
 @ConfigSources(value = {@ConfigSource(ordinal = 200, resource = "classpath:/META-INF/default.properties")
-        , @ConfigSource(ordinal = 300, resource = "classpath:/META-INF/default2.properties")
+        , @ConfigSource(ordinal = 300, resource = "ttl:/META-INF/default.properties")
 })
 public class ConfigSourcesTest {
 
